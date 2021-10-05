@@ -27,7 +27,7 @@ cd example-app
 The application uses [Laravel Sail](https://laravel.com/docs/8.x/sail), which provides a simple command-line interface for interacting with Laravel's default Docker configuration:
 
 ```bash
-vendor/bin/sail up
+docker-compose up -d
 ```
 
 The following containers will be created: 
@@ -38,7 +38,7 @@ The following containers will be created:
 
 #### Install the dependencies
 ```bash
-vendor/bin/sail composer install
+docker exec example-app_laravel.test_1 composer install
 ```
 
 #### Create the .env file
@@ -50,7 +50,7 @@ cp .env.example .env
 ```bash
 vendor/bin/sail php artisan migrate
 
-vendor/bin/sail php artisan seed
+vendor/bin/sail php artisan db:seed
 ```
 
 This will create:
