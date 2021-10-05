@@ -3,7 +3,7 @@
 ![ico-laravel]
 ![ico-php]
 ![ico-mysql]
-[ico-mongodb]
+![ico-mongodb]
 ![Software License][ico-license]
 
 This is a Laravel example application build for demo purposes.
@@ -12,7 +12,7 @@ The application is a RESTful API exposing some simple endpoints and tracking all
 
 ## Installation
 
-To get started, you only need to install [Docker Desktop](https://www.docker.com/products/docker-desktop).
+To get started, you need to install [Docker Desktop](https://www.docker.com/products/docker-desktop).
 
 Follow the steps below in order to have the application up and running.
 
@@ -63,7 +63,9 @@ You can access the application in your web browser at: [http://localhost/logs](h
 
 ## Usage
 
-The application exposes both endpoints protected by an authentication layer (Bearer token), and public endpoints:
+The application exposes both endpoints protected by an authentication layer (Bearer token), and public endpoints.
+
+[Swagger file](swagger.yaml)
 
 - GET /token
 - GET /logs
