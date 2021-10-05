@@ -1,0 +1,249 @@
+openapi: 3.0.0
+info:
+  description: This is a simple example API
+  version: "1.0.0"
+  title: Simple example API
+  contact:
+    email: simonaplesuvu@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+paths:
+  /token:
+    get:
+      summary: Obtain an access token
+      operationId: token
+      description: |
+        Obtain an access token based on credentials
+      parameters:
+        - in: query
+          name: email
+          description: Pass the email address of the user
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
+            format: email
+            example: ivory.purdy@example.net
+        - in: query
+          name: password
+          description: Pass the password of the user
+          required: true
+          allowEmptyValue: false
+          schema:
+            type: string
+            format: password
+      responses:
+        '200':
+          description: The access token information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Token'
+        '401':
+          $ref: '#/components/responses/InvalidCredentials'
+  /me:
+    get:
+      summary: Get the current user
+      operationId: me
+      description: |
+        Get the current user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: The current user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /logs:
+    get:
+      summary: Searches logs
+      operationId: searchLogs
+      description: |
+        By passing in the appropriate options, you can search for
+        available API audit logs in the system
+      parameters:
+        - in: query
+          name: search
+          description: Pass an optional search string for looking up logs
+          required: false
+          allowEmptyValue: true
+          schema:
+            type: string
+        - in: query
+          name: order-by
+          description: Pass an optional order by string
+          required: false
+          allowEmptyValue: true
+          schema:
+            type: string
+            default: created_at
+        - in: query
+          name: order
+          description: Pass an optional order string
+          required: false
+          allowEmptyValue: true
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+        - in: query
+          name: per-page
+          description: Maximum number of records to return
+          required: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - in: query
+          name: page
+          description: Current page - default 1
+          required: false
+          allowEmptyValue: true
+          schema:
+            type: integer
+            format: int32
+            default: 1
+      responses:
+        '200':
+          description: Search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LogsResponse'
+        '400':
+          description: bad input parameter
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    UnauthorizedError:
+      description: Bearer token is missing or invalid
+    InvalidCredentials:
+      description: Invalid credentials
+  schemas:
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6Ikl2cmZNbnpiNFQ0T1cydFoifQ.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3QiLCJzdWIiOiIyIiwianRpIjoiSXZyZk1uemI0VDRPVzJ0WiIsImlhdCI6MTYzMzQzMjE1MiwibmJmIjoxNjMzNDMyMTUyLCJleHAiOjE2MzM0MzU3NTIsInJsaSI6MTYzMzg2Nzc1Mn0.XBnhyymPk3kjC6biPLhdV5SUE1OCfwBB0In1Yvvw-c0
+        expires_in:
+          type: integer
+          format: int32
+          example: 60
+        token_type:
+          type: string
+          example: Bearer
+    User:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        id:
+          type: integer
+          format: int32
+          example: 1
+        name:
+          type: string
+          example: Garnett Parisian
+        email:
+          type: string
+          format: email
+          example: ivory.purdy@example.net
+        email_verified_at:
+          type: string
+          format: date-time
+          example: '2021-10-04T16:44:00.739000Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2021-10-04T16:44:00.739000Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-10-04T16:44:00.739000Z'
+    LogsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogsItem'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        _links:
+          $ref: '#/components/schemas/Hateoas'
+    LogsItem:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 615b2f50ab52c844d65a0e56
+        ip:
+          type: string
+          example: 192.168.80.1
+        user_agent:
+          type: string
+          example: PostmanRuntime/7.28.4
+        url:
+          type: string
+          example: http://examaple.com/logs
+        updated_at:
+          type: string
+          format: date-time
+          example: '2021-10-04T16:44:00.739000Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-10-04T16:44:00.739000Z'
+    Pagination:
+      type: object
+      required:
+        - current_page
+        - total
+        - per_page
+      properties:
+        current_page:
+          type: integer
+          format: int32
+          example: 1
+        total:
+          type: integer
+          format: int32
+          example: 35
+        per_page:
+          type: integer
+          format: int32
+          example: 10
+    Hateoas:
+      type: object
+      required:
+        - self
+        - next
+        - prev
+      properties:
+        self:
+          type: string
+          example: http://examaple.com/logs?page=2
+        next:
+          type: string
+          example: http://examaple.com/logs?page=3
+        prev:
+          type: string
+          example: http://examaple.com/logs?page=1
